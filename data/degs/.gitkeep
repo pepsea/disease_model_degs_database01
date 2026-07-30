@@ -1,0 +1,3 @@
+外部解析済み（DESeq2 / limma / edgeR 等）の DEG 結果表をこのディレクトリに置く。
+ファイル名は comparisons.csv の comparison_id と一致させる（例: CMP_GSE123456_KIDNEY_DBDB.csv）。
+形式は docs/DATA_FORMAT.md を参照。

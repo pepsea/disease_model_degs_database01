@@ -1,0 +1,3 @@
+発現マトリクス CSV をこのディレクトリに置く。
+ファイル名は datasets.csv の dataset_id と一致させる（例: GSE123456.csv）。
+形式は docs/DATA_FORMAT.md を参照。

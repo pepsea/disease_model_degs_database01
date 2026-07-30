@@ -1,0 +1,23 @@
+term,label_ja,synonyms
+kidney,腎臓,renal;kidneys
+liver,肝臓,hepatic
+heart,心臓,cardiac;myocardium
+lung,肺,pulmonary;lungs
+brain,脳,cerebrum
+skeletal_muscle,骨格筋,muscle;gastrocnemius;quadriceps
+adipose_white,白色脂肪組織,WAT;white adipose;epididymal fat
+adipose_brown,褐色脂肪組織,BAT;brown adipose
+pancreas,膵臓,pancreatic;islet
+spleen,脾臓,splenic
+intestine_small,小腸,small intestine;jejunum;ileum;duodenum
+intestine_large,大腸,colon;large intestine
+stomach,胃,gastric
+aorta,大動脈,aortic
+blood,血液,whole blood;peripheral blood
+bone_marrow,骨髄,marrow
+skin,皮膚,dermis;epidermis
+retina,網膜,retinal
+testis,精巣,testicular
+ovary,卵巣,ovarian
+thymus,胸腺,thymic
+lymph_node,リンパ節,lymph nodes

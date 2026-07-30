@@ -1,0 +1,29 @@
+# 取り込み処理が data/ の CSV から自動生成する派生物（正データは data/ の CSV）
+build/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# OS / エディタ
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# 大容量の生データ置き場（必要に応じて個別に許可する）
+data/raw/
+*.h5
+*.h5ad
+*.rds

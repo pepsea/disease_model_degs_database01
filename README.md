@@ -16,12 +16,52 @@
 - Python 3.11 以上
 - Node.js 20 以上（Web UI をビルドする場合）
 
-### 1. セットアップ
+### 一番簡単な起動方法
+
+起動スクリプトが、仮想環境の作成・依存関係の導入・CSV の取り込み・画面のビルド・
+サーバ起動までまとめて行います。2 回目以降は既にあるものを再利用するので即座に起動します。
 
 ```bash
-git clone <このリポジトリ>
+git clone https://github.com/pepsea/disease_model_degs_database01.git
 cd disease_model_degs_database01
 
+# macOS / Linux
+./scripts/run_local.sh --example     # まず付属の合成データで動かす
+./scripts/run_local.sh               # data/ に登録した自分のデータで動かす
+```
+
+```powershell
+# Windows PowerShell
+.\scripts\run_local.ps1 -Example
+.\scripts\run_local.ps1
+```
+
+終了すると次のように表示されるので、ブラウザで開きます。
+
+```
+------------------------------------------------------------
+ Web 画面: http://127.0.0.1:8000
+ API 仕様: http://127.0.0.1:8000/api/docs
+ 終了するには Ctrl+C
+------------------------------------------------------------
+```
+
+主なオプション（両スクリプト共通、PowerShell 版は `-Example` のように `-` 始まり）:
+
+| オプション | 意味 |
+|---|---|
+| `--example` | `data/` ではなく付属の合成データを使う |
+| `--port 9000` | ポートを変える（既定 8000） |
+| `--rebuild` | 画面のビルドをやり直す |
+| `--api-only` | Node.js を使わず API のみ起動する |
+
+初回のみ、依存関係の導入と画面のビルドで合計 3〜5 分かかります。
+
+以下は、スクリプトが内部で行っていることを手動で実行する場合の手順です。
+
+### 1. セットアップ（手動の場合）
+
+```bash
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"

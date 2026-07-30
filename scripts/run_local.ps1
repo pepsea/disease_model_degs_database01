@@ -27,6 +27,42 @@ $ErrorActionPreference = "Stop"
 Set-Location (Join-Path $PSScriptRoot "..")
 $root = (Get-Location).Path
 
+function Show-CachePermissionHint {
+  Write-Host ""
+  Write-Host "  npm の共有キャッシュに、現在のユーザーが書き込めないファイルが含まれています。"
+  Write-Host "  他のプロジェクトでも同じ問題が起きるため、キャッシュを作り直すことを勧めます:"
+  Write-Host ""
+  Write-Host "      npm cache clean --force"
+  Write-Host ""
+}
+
+# npm install を実行する。キャッシュの権限問題で失敗した場合は
+# 一時キャッシュで再試行し、共有キャッシュに触れずに導入を通す。
+function Invoke-NpmInstall {
+  Push-Location frontend
+  try {
+    npm install --no-audit --no-fund
+    if ($LASTEXITCODE -eq 0) { return }
+
+    Write-Host ""
+    Write-Host "npm install が失敗しました。キャッシュの権限問題の可能性があるため、一時キャッシュで再試行します…"
+    $tmpCache = Join-Path ([System.IO.Path]::GetTempPath()) ("npm-cache-" + [System.Guid]::NewGuid().ToString("N"))
+    try {
+      npm install --no-audit --no-fund --cache $tmpCache
+      if ($LASTEXITCODE -ne 0) {
+        Show-CachePermissionHint
+        throw "npm install が失敗しました。"
+      }
+      Write-Host "一時キャッシュで導入できました。"
+      Show-CachePermissionHint
+    } finally {
+      Remove-Item -Recurse -Force $tmpCache -ErrorAction SilentlyContinue
+    }
+  } finally {
+    Pop-Location
+  }
+}
+
 # ---- Python の確認 ----
 $python = $null
 foreach ($candidate in @("python", "python3", "py")) {
@@ -89,7 +125,7 @@ if (-not $ApiOnly) {
   }
   if (-not (Test-Path "frontend\node_modules")) {
     Write-Host "フロントエンドの依存関係を導入します（初回のみ）…"
-    Push-Location frontend; npm install --no-audit --no-fund; Pop-Location
+    Invoke-NpmInstall
   }
   if ($Rebuild -or -not (Test-Path "frontend\dist\index.html")) {
     Write-Host "フロントエンドをビルドします（1〜2 分かかります）…"

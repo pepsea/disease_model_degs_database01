@@ -26,10 +26,51 @@ while [[ $# -gt 0 ]]; do
     --rebuild) REBUILD=1; shift ;;
     --api-only) API_ONLY=1; shift ;;
     --port) PORT="${2:?--port にはポート番号が必要です}"; shift 2 ;;
-    -h|--help) sed -n '2,16p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    # 先頭のコメント block をそのまま使う（行番号を埋め込まないので編集に強い）
+    -h|--help) awk 'NR>1 && /^#/ {sub(/^# ?/, ""); print; next} NR>1 {exit}' "$0"; exit 0 ;;
     *) echo "不明な引数: $1（--help を参照）" >&2; exit 1 ;;
   esac
 done
+
+cache_permission_hint() {
+  cat >&2 <<'HINT'
+
+  npm の共有キャッシュ (~/.npm) に、現在のユーザーが書き込めないファイルが
+  含まれています。過去に `sudo npm install` を実行すると、root 所有のファイルが
+  キャッシュに残ってこの状態になります。
+
+  他のプロジェクトでも同じ問題が起きるため、次のコマンドで所有者を戻すことを
+  勧めます（macOS / Linux 共通・パスワードを求められます）:
+
+      sudo chown -R "$(id -u):$(id -g)" ~/.npm
+
+HINT
+}
+
+# npm install を実行する。キャッシュの権限問題で失敗した場合は
+# 一時キャッシュで再試行し、~/.npm に触れずに導入を通す。
+npm_install() {
+  if (cd frontend && npm install --no-audit --no-fund); then
+    return 0
+  fi
+
+  echo
+  echo "npm install が失敗しました。キャッシュの権限問題の可能性があるため、一時キャッシュで再試行します…"
+  local tmp_cache status=0
+  tmp_cache="$(mktemp -d)"
+  (cd frontend && npm install --no-audit --no-fund --cache "$tmp_cache") || status=$?
+  rm -rf "$tmp_cache"
+
+  if [[ $status -ne 0 ]]; then
+    echo "一時キャッシュでも失敗しました。" >&2
+    cache_permission_hint
+    return $status
+  fi
+
+  echo "一時キャッシュで導入できました。"
+  cache_permission_hint
+  return 0
+}
 
 # ---- Python の確認 ----
 PYTHON=""
@@ -96,7 +137,7 @@ if [[ $API_ONLY -eq 0 ]]; then
   fi
   if [[ ! -d frontend/node_modules ]]; then
     echo "フロントエンドの依存関係を導入します（初回のみ）…"
-    (cd frontend && npm install --no-audit --no-fund)
+    npm_install
   fi
   if [[ $REBUILD -eq 1 || ! -f frontend/dist/index.html ]]; then
     echo "フロントエンドをビルドします（1〜2 分かかります）…"

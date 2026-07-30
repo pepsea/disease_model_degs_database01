@@ -1,0 +1,45 @@
+# 疾患モデル遺伝子発現データベース
+#
+#   docker compose up --build                    自分のデータ (data/) で起動
+#   docker compose --profile example up --build  付属の合成データで起動
+#
+# どちらも http://127.0.0.1:8000 で開く。
+# CSV を編集したら `docker compose restart` で取り込み直される。
+
+services:
+  # 自分のデータで動かす。data/ をホストから読み込む。
+  app:
+    build: .
+    image: dmdeg:latest
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      # 登録元 CSV。ホスト側で編集する。コンテナからは読むだけなので読み取り専用。
+      - ./data:/app/data:ro
+      # 取り込みで生成される派生ストア。名前付きボリュームに置くことで、
+      # ホストの build/ を汚さず、コンテナ再作成でも作り直しで済む。
+      - dmdeg-build:/app/build
+    environment:
+      DMDEG_DATA_DIR: /app/data
+      DMDEG_BUILD_DIR: /app/build
+      # BASIC 認証をかける場合は "利用者名:パスワード" を設定する
+      DMDEG_BASIC_AUTH: "${DMDEG_BASIC_AUTH:-}"
+    restart: unless-stopped
+
+  # 付属の合成データで動かす（動作確認用）。ホストのデータは一切参照しない。
+  example:
+    profiles: ["example"]
+    build: .
+    image: dmdeg:latest
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - dmdeg-build-example:/app/build_example
+    environment:
+      DMDEG_DATA_DIR: /app/example_data
+      DMDEG_BUILD_DIR: /app/build_example
+    restart: unless-stopped
+
+volumes:
+  dmdeg-build:
+  dmdeg-build-example:

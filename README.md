@@ -16,7 +16,40 @@
 - Python 3.11 以上
 - Node.js 20 以上（Web UI をビルドする場合）
 
-### 一番簡単な起動方法
+### Docker で起動する（Python も Node.js も入れずに済む）
+
+Docker Desktop（または Docker Engine）だけあれば動きます。
+
+```bash
+git clone https://github.com/pepsea/disease_model_degs_database01.git
+cd disease_model_degs_database01
+
+# まず付属の合成データで動かす
+docker compose --profile example up --build
+
+# 自分のデータ（data/ 配下の CSV）で動かす
+docker compose up --build
+```
+
+ブラウザで **http://127.0.0.1:8000** を開きます。初回のビルドは 3〜5 分かかります。
+
+| 操作 | コマンド |
+|---|---|
+| 停止 | `docker compose down` |
+| CSV を編集して反映 | `docker compose restart`（起動のたびに取り込み直します） |
+| ログを見る | `docker compose logs -f` |
+| ポートを変える | `docker compose up` の前に `docker-compose.yml` の `8000:8000` を編集 |
+| BASIC 認証をかける | `DMDEG_BASIC_AUTH=user:pass docker compose up` |
+
+**CSV に問題があるとサーバは起動しません。** 取り込みに失敗した時点でコンテナが終了し、
+ファイル名・行番号付きのエラーがログに出ます。検証に失敗したまま古いデータを配信して
+登録内容を偽って見せることがないようにしています。エラーを直して `docker compose up`
+を再実行してください。
+
+`data/` は読み取り専用でマウントされ、取り込み結果は Docker の名前付きボリュームに
+入ります。ホスト側に `build/` は作られません。
+
+### 一番簡単な起動方法（Docker を使わない場合）
 
 起動スクリプトが、仮想環境の作成・依存関係の導入・CSV の取り込み・画面のビルド・
 サーバ起動までまとめて行います。2 回目以降は既にあるものを再利用するので即座に起動します。

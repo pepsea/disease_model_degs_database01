@@ -30,3 +30,7 @@ data/raw/
 
 # 合成例データを ingest した派生物（example_data/ の CSV 自体はコミットする）
 build_example/
+
+# スモークテストのスクリーンショット出力
+frontend/smoke-output/
+*.tsbuildinfo

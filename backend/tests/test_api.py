@@ -395,6 +395,49 @@ def test_export_samples_csv(client):
 # ---- 認証 -------------------------------------------------------------
 
 
+# ---- 並行アクセス -----------------------------------------------------
+
+
+def test_concurrent_queries_do_not_interfere(store):
+    """1 本の DuckDB 接続を複数スレッドで共有しても結果が壊れないこと。
+
+    FastAPI は同期エンドポイントをスレッドプールで実行するため、ブラウザが
+    PCA・ヒートマップ・相関を同時に要求すると実際に並行アクセスが起きる。
+    接続を共有したまま実行すると fetch が None を返し 500 になる。
+    """
+    import threading
+
+    failures: list[str] = []
+
+    def worker(index: int) -> None:
+        try:
+            for _ in range(8):
+                frame = store.query("SELECT COUNT(*) AS n FROM expression")
+                if frame is None or frame.empty:
+                    failures.append(f"{index}: 空の結果")
+                    return
+                samples = store.list_samples()
+                if len(samples) != 22:
+                    failures.append(f"{index}: サンプル数が {len(samples)}")
+                    return
+        except Exception as exc:  # noqa: BLE001 - 失敗理由をそのまま報告する
+            failures.append(f"{index}: {type(exc).__name__}: {exc}")
+
+    threads = [threading.Thread(target=worker, args=(i,)) for i in range(8)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    assert failures == []
+
+
+def test_openapi_docs_do_not_shadow_frontend_route(client):
+    """FastAPI の Swagger UI が SPA の /docs を奪っていないこと。"""
+    assert client.get("/api/docs").status_code == 200
+    assert client.get("/api/openapi.json").status_code == 200
+
+
 def test_basic_auth_enforced_when_configured(example_root, monkeypatch):
     from fastapi.testclient import TestClient
 

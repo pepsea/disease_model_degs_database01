@@ -14,7 +14,9 @@ import secrets
 
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.staticfiles import StaticFiles
 
 from .. import config
 from ..store import get_store
@@ -52,6 +54,29 @@ def require_auth(credentials: HTTPBasicCredentials | None = Depends(_security)) 
         )
 
 
+def _mount_frontend(app: FastAPI) -> None:
+    """ビルド済みフロントエンドがあれば同じサーバから配信する。
+
+    ローカルでは 1 プロセスで完結させたいため。`npm run build` を実行して
+    いない場合は API のみで動く（開発時は Vite の dev サーバを使う）。
+    """
+    dist = config.ROOT_DIR / "frontend" / "dist"
+    index = dist / "index.html"
+    if not index.exists():
+        return
+
+    app.mount("/assets", StaticFiles(directory=dist / "assets"), name="assets")
+
+    @app.get("/{path:path}", include_in_schema=False)
+    def spa(path: str) -> FileResponse:
+        # SPA なので /compare などのパスもすべて index.html を返し、
+        # ルーティングはブラウザ側の react-router に任せる。
+        candidate = dist / path
+        if path and candidate.is_file():
+            return FileResponse(candidate)
+        return FileResponse(index)
+
+
 def create_app() -> FastAPI:
     app = FastAPI(
         title="疾患モデル遺伝子発現データベース",
@@ -60,6 +85,10 @@ def create_app() -> FastAPI:
             "データ登録は data/ 配下の CSV で行う。"
         ),
         version="0.1.0",
+        # 既定の /docs はフロントエンドの「データ登録」画面と衝突するため退避する
+        docs_url="/api/docs",
+        redoc_url="/api/redoc",
+        openapi_url="/api/openapi.json",
     )
 
     origins = os.environ.get("DMDEG_CORS_ORIGINS")
@@ -91,6 +120,10 @@ def create_app() -> FastAPI:
             "ingested_at": manifest.get("generated_at"),
             "counts": manifest.get("counts", {}),
         }
+
+    # SPA のフォールバックは総取りのルートなので、必ず最後に登録する。
+    # 先に登録すると /api/* まで index.html を返してしまう。
+    _mount_frontend(app)
 
     return app
 

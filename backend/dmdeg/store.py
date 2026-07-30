@@ -10,8 +10,9 @@ DuckDB を「CSV から生成した parquet に対する検索エンジン」と
 from __future__ import annotations
 
 import json
+import threading
 from pathlib import Path
-from typing import Any, Iterable, Sequence
+from typing import Any, Sequence
 
 import duckdb
 import pandas as pd
@@ -149,10 +150,17 @@ class Store:
 
     parquet を参照する VIEW をインメモリ DuckDB に張るだけなので、
     `build/` を作り直したら `reload()` を呼べば最新を読む。
+
+    スレッド安全性: FastAPI は同期エンドポイントをスレッドプールで実行する
+    ため、1 本の DuckDB 接続を複数スレッドで共有すると実行中の結果が
+    互いに無効化され、fetch が None を返す。クエリごとに `cursor()` で
+    子接続を作ることで、カタログ（VIEW 定義）を共有しつつ実行を分離する。
     """
 
     def __init__(self) -> None:
         self.con = duckdb.connect(":memory:")
+        # VIEW の張り替えはカタログを書き換えるため、クエリ実行と排他する
+        self._lock = threading.RLock()
         create_views(self.con)
         self._manifest_mtime = self._current_manifest_mtime()
 
@@ -163,8 +171,9 @@ class Store:
         return path.stat().st_mtime if path.exists() else None
 
     def reload(self) -> None:
-        create_views(self.con)
-        self._manifest_mtime = self._current_manifest_mtime()
+        with self._lock:
+            create_views(self.con)
+            self._manifest_mtime = self._current_manifest_mtime()
 
     def reload_if_stale(self) -> None:
         """ingest が走った後に自動で最新の parquet を読み直す。"""
@@ -172,8 +181,13 @@ class Store:
             self.reload()
 
     def query(self, sql: str, params: dict[str, Any] | None = None) -> pd.DataFrame:
-        cursor = self.con.execute(sql, params) if params else self.con.execute(sql)
-        return cursor.fetch_df()
+        with self._lock:
+            cursor = self.con.cursor()
+        try:
+            result = cursor.execute(sql, params) if params else cursor.execute(sql)
+            return result.fetch_df()
+        finally:
+            cursor.close()
 
     def manifest(self) -> dict:
         path = config.manifest_path()

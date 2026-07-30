@@ -1,0 +1,4 @@
+model_id,model_name,species,strain,modality,target_gene,disease_category,description,reference_url
+MDL_DB_DB,db/db マウス,Mus musculus,C57BLKS/J,spontaneous,Lepr,代謝,レプチン受容体機能欠損による 2 型糖尿病モデル（合成例データ）,
+MDL_COL4A3_KO,Col4a3 KO マウス,Mus musculus,C57BL/6J,KO,Col4a3,腎,アルポート症候群モデル（合成例データ）,
+MDL_WT,野生型対照,Mus musculus,C57BL/6J,none,,対照,無処置の野生型（合成例データ）,

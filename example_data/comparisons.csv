@@ -1,0 +1,2 @@
+comparison_id,dataset_id,case_group_label,control_group_label,organ,method,label
+CMP_GSE900001_KIDNEY_DBDB,GSE900001,dbdb_kidney_16w,WT_kidney_16w,kidney,example_precomputed,"db/db vs WT（腎, 16週）※合成例の登録済み DEG 表"

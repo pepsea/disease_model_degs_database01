@@ -1,0 +1,23 @@
+sample_id,dataset_id,model_id,group_label,genotype,is_control,organ,tissue_detail,sex,age_weeks,treatment,replicate,batch
+GSM9000001,GSE900001,MDL_WT,WT_kidney_16w,WT,TRUE,kidney,renal cortex,male,16,none,1,GSE900001_B1
+GSM9000002,GSE900001,MDL_WT,WT_kidney_16w,WT,TRUE,kidney,renal cortex,female,16,none,2,GSE900001_B1
+GSM9000003,GSE900001,MDL_WT,WT_kidney_16w,WT,TRUE,kidney,renal cortex,male,16,none,3,GSE900001_B1
+GSM9000004,GSE900001,MDL_WT,WT_kidney_16w,WT,TRUE,kidney,renal cortex,female,16,none,4,GSE900001_B1
+GSM9000005,GSE900001,MDL_DB_DB,dbdb_kidney_16w,mutant,FALSE,kidney,renal cortex,male,16,none,1,GSE900001_B1
+GSM9000006,GSE900001,MDL_DB_DB,dbdb_kidney_16w,mutant,FALSE,kidney,renal cortex,female,16,none,2,GSE900001_B1
+GSM9000007,GSE900001,MDL_DB_DB,dbdb_kidney_16w,mutant,FALSE,kidney,renal cortex,male,16,none,3,GSE900001_B1
+GSM9000008,GSE900001,MDL_DB_DB,dbdb_kidney_16w,mutant,FALSE,kidney,renal cortex,female,16,none,4,GSE900001_B1
+GSM9000009,GSE900001,MDL_WT,WT_liver_16w,WT,TRUE,liver,,male,16,none,1,GSE900001_B1
+GSM9000010,GSE900001,MDL_WT,WT_liver_16w,WT,TRUE,liver,,female,16,none,2,GSE900001_B1
+GSM9000011,GSE900001,MDL_WT,WT_liver_16w,WT,TRUE,liver,,male,16,none,3,GSE900001_B1
+GSM9000012,GSE900001,MDL_WT,WT_liver_16w,WT,TRUE,liver,,female,16,none,4,GSE900001_B1
+GSM9000013,GSE900001,MDL_DB_DB,dbdb_liver_16w,mutant,FALSE,liver,,male,16,none,1,GSE900001_B1
+GSM9000014,GSE900001,MDL_DB_DB,dbdb_liver_16w,mutant,FALSE,liver,,female,16,none,2,GSE900001_B1
+GSM9000015,GSE900001,MDL_DB_DB,dbdb_liver_16w,mutant,FALSE,liver,,male,16,none,3,GSE900001_B1
+GSM9000016,GSE900001,MDL_DB_DB,dbdb_liver_16w,mutant,FALSE,liver,,female,16,none,4,GSE900001_B1
+GSM9000017,GSE900002,MDL_WT,WT_kidney_8w,WT,TRUE,kidney,renal cortex,male,8,none,1,GSE900002_B1
+GSM9000018,GSE900002,MDL_WT,WT_kidney_8w,WT,TRUE,kidney,renal cortex,female,8,none,2,GSE900002_B1
+GSM9000019,GSE900002,MDL_WT,WT_kidney_8w,WT,TRUE,kidney,renal cortex,male,8,none,3,GSE900002_B1
+GSM9000020,GSE900002,MDL_COL4A3_KO,Col4a3KO_kidney_8w,mutant,FALSE,kidney,renal cortex,male,8,none,1,GSE900002_B1
+GSM9000021,GSE900002,MDL_COL4A3_KO,Col4a3KO_kidney_8w,mutant,FALSE,kidney,renal cortex,female,8,none,2,GSE900002_B1
+GSM9000022,GSE900002,MDL_COL4A3_KO,Col4a3KO_kidney_8w,mutant,FALSE,kidney,renal cortex,male,8,none,3,GSE900002_B1

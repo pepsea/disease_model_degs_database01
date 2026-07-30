@@ -27,3 +27,6 @@ data/raw/
 *.h5
 *.h5ad
 *.rds
+
+# 合成例データを ingest した派生物（example_data/ の CSV 自体はコミットする）
+build_example/

@@ -1,0 +1,3 @@
+dataset_id,title,model_id,species,assay,unit,gene_id_type,platform,duplicate_policy,pmid,geo_url,submitted_by,notes
+GSE900001,db/db マウスの腎臓・肝臓 RNA-seq（合成例データ）,MDL_DB_DB,Mus musculus,RNA-seq,counts,symbol,GPL24247,max,,,example,動作確認用の合成データ。生物学的解釈には使えない。
+GSE900002,Col4a3 KO マウスの腎臓マイクロアレイ（合成例データ）,MDL_COL4A3_KO,Mus musculus,microarray,log2_intensity,symbol,GPL6246,max,,,example,単位が log2_intensity の例。二重 log 変換されないことの確認用。

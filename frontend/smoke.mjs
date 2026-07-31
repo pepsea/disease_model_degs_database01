@@ -2,7 +2,7 @@
  *
  *   1. API を起動しておく（ビルド済みフロントを同じサーバから配信する）
  *        DMDEG_DATA_DIR=example_data DMDEG_BUILD_DIR=build_example \
- *          python -m uvicorn dmdeg.api.main:app --port 8000
+ *          python -m uvicorn dmdeg.api.main:app --port 8002
  *   2. npm run smoke
  *
  * ブラウザは PLAYWRIGHT_CHROMIUM か、Playwright 同梱のものを使う。
@@ -12,7 +12,7 @@
 import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
 
-const BASE = process.env.DMDEG_BASE_URL ?? "http://127.0.0.1:8000";
+const BASE = process.env.DMDEG_BASE_URL ?? "http://127.0.0.1:8002";
 const OUT = process.env.DMDEG_SMOKE_OUT ?? "smoke-output";
 mkdirSync(OUT, { recursive: true });
 

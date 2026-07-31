@@ -7,7 +7,7 @@ export default defineConfig({
     // 開発時は API を同一オリジンに見せて CORS を避ける
     proxy: {
       "/api": {
-        target: process.env.DMDEG_API_URL ?? "http://127.0.0.1:8000",
+        target: process.env.DMDEG_API_URL ?? "http://127.0.0.1:8002",
         changeOrigin: true,
       },
     },

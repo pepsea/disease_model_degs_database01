@@ -3,7 +3,7 @@
 #
 #   ./scripts/run_local.sh --example     付属の合成データで起動する
 #   ./scripts/run_local.sh               data/ の自分のデータで起動する
-#   ./scripts/run_local.sh --port 9000   ポートを変える
+#   ./scripts/run_local.sh --port 9000   ポートを変える（既定 8002）
 #   ./scripts/run_local.sh --rebuild     フロントエンドを作り直す
 #   ./scripts/run_local.sh --api-only    フロントを使わず API のみ起動する
 #
@@ -18,7 +18,7 @@ ROOT="$(pwd)"
 USE_EXAMPLE=0
 REBUILD=0
 API_ONLY=0
-PORT=8000
+PORT=8002
 
 while [[ $# -gt 0 ]]; do
   case "$1" in

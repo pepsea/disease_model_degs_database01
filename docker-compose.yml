@@ -3,7 +3,8 @@
 #   docker compose up --build                    自分のデータ (data/) で起動
 #   docker compose --profile example up --build  付属の合成データで起動
 #
-# どちらも http://127.0.0.1:8000 で開く。
+# どちらも http://127.0.0.1:8002 で開く。
+# ポートを変えたい場合: DMDEG_PORT=9000 docker compose up
 # CSV を編集したら `docker compose restart` で取り込み直される。
 
 services:
@@ -12,7 +13,7 @@ services:
     build: .
     image: dmdeg:latest
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:${DMDEG_PORT:-8002}:8000"
     volumes:
       # 登録元 CSV。ホスト側で編集する。コンテナからは読むだけなので読み取り専用。
       - ./data:/app/data:ro
@@ -32,7 +33,7 @@ services:
     build: .
     image: dmdeg:latest
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:${DMDEG_PORT:-8002}:8000"
     volumes:
       - dmdeg-build-example:/app/build_example
     environment:

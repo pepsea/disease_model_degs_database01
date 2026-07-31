@@ -3,7 +3,7 @@
 
   .\scripts\run_local.ps1 -Example      付属の合成データで起動する
   .\scripts\run_local.ps1               data\ の自分のデータで起動する
-  .\scripts\run_local.ps1 -Port 9000    ポートを変える
+  .\scripts\run_local.ps1 -Port 9000    ポートを変える（既定 8002）
   .\scripts\run_local.ps1 -Rebuild      フロントエンドを作り直す
   .\scripts\run_local.ps1 -ApiOnly      フロントを使わず API のみ起動する
 
@@ -19,7 +19,7 @@ param(
   [switch]$Example,
   [switch]$Rebuild,
   [switch]$ApiOnly,
-  [int]$Port = 8000
+  [int]$Port = 8002
 )
 
 $ErrorActionPreference = "Stop"

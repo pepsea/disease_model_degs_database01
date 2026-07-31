@@ -31,14 +31,14 @@ docker compose --profile example up --build
 docker compose up --build
 ```
 
-ブラウザで **http://127.0.0.1:8000** を開きます。初回のビルドは 3〜5 分かかります。
+ブラウザで **http://127.0.0.1:8002** を開きます。初回のビルドは 3〜5 分かかります。
 
 | 操作 | コマンド |
 |---|---|
 | 停止 | `docker compose down` |
 | CSV を編集して反映 | `docker compose restart`（起動のたびに取り込み直します） |
 | ログを見る | `docker compose logs -f` |
-| ポートを変える | `docker compose up` の前に `docker-compose.yml` の `8000:8000` を編集 |
+| ポートを変える | `DMDEG_PORT=9000 docker compose up` |
 | BASIC 認証をかける | `DMDEG_BASIC_AUTH=user:pass docker compose up` |
 
 **CSV に問題があるとサーバは起動しません。** 取り込みに失敗した時点でコンテナが終了し、
@@ -73,8 +73,8 @@ cd disease_model_degs_database01
 
 ```
 ------------------------------------------------------------
- Web 画面: http://127.0.0.1:8000
- API 仕様: http://127.0.0.1:8000/api/docs
+ Web 画面: http://127.0.0.1:8002
+ API 仕様: http://127.0.0.1:8002/api/docs
  終了するには Ctrl+C
 ------------------------------------------------------------
 ```
@@ -84,7 +84,7 @@ cd disease_model_degs_database01
 | オプション | 意味 |
 |---|---|
 | `--example` | `data/` ではなく付属の合成データを使う |
-| `--port 9000` | ポートを変える（既定 8000） |
+| `--port 9000` | ポートを変える（既定 8002） |
 | `--rebuild` | 画面のビルドをやり直す |
 | `--api-only` | Node.js を使わず API のみ起動する |
 
@@ -115,16 +115,16 @@ cd frontend && npm install && npm run build && cd ..
 
 # 起動（API と UI を同じサーバから配信）
 DMDEG_DATA_DIR=example_data DMDEG_BUILD_DIR=build_example \
-  python -m uvicorn dmdeg.api.main:app --port 8000
+  python -m uvicorn dmdeg.api.main:app --port 8002
 ```
 
-ブラウザで **http://127.0.0.1:8000** を開きます。
+ブラウザで **http://127.0.0.1:8002** を開きます。
 
 Windows の PowerShell で環境変数を渡す場合:
 
 ```powershell
 $env:DMDEG_DATA_DIR="example_data"; $env:DMDEG_BUILD_DIR="build_example"
-python -m uvicorn dmdeg.api.main:app --port 8000
+python -m uvicorn dmdeg.api.main:app --port 8002
 ```
 
 ### 3. 自分のデータで動かす
@@ -137,7 +137,7 @@ python -m dmdeg.ingest --check
 python -m dmdeg.ingest
 
 # 起動（環境変数は不要。既定で data/ と build/ を使う）
-python -m uvicorn dmdeg.api.main:app --port 8000
+python -m uvicorn dmdeg.api.main:app --port 8002
 ```
 
 置くファイルと列は [`docs/DATA_FORMAT.md`](docs/DATA_FORMAT.md) にまとめてあります。
@@ -145,11 +145,11 @@ python -m uvicorn dmdeg.api.main:app --port 8000
 
 ### UI を書き換えながら開発する場合
 
-Vite の開発サーバを使うと即時反映されます（`/api` は 8000 番に転送されます）。
+Vite の開発サーバを使うと即時反映されます（`/api` は 8002 番に転送されます）。
 
 ```bash
 # 端末 1
-python -m uvicorn dmdeg.api.main:app --port 8000 --reload
+python -m uvicorn dmdeg.api.main:app --port 8002 --reload
 # 端末 2
 cd frontend && npm run dev      # http://127.0.0.1:5173
 ```
@@ -238,4 +238,4 @@ CSV を直接スキャンする方式にしなかったのは、遺伝子 1 件�
 | バックエンド | Python 3.11 / FastAPI / numpy・scipy |
 | フロントエンド | React + TypeScript + Plotly + Vite |
 
-API 仕様は起動後 http://127.0.0.1:8000/api/docs で確認できます。
+API 仕様は起動後 http://127.0.0.1:8002/api/docs で確認できます。

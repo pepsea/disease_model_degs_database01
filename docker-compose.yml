@@ -3,8 +3,16 @@
 #   docker compose up --build                    自分のデータ (data/) で起動
 #   docker compose --profile example up --build  付属の合成データで起動
 #
-# どちらも http://127.0.0.1:8002 で開く。
-# ポートを変えたい場合: DMDEG_PORT=9000 docker compose up
+# 自分のデータ  → http://127.0.0.1:8002
+# 合成データ    → http://127.0.0.1:8003
+#
+# 2 つは別のポートを使うので同時に動かせる。同じポートにすると、片方が
+# 残っているときに 'port is already allocated' で起動できなくなるため。
+#
+# ポートを変えたい場合:
+#   DMDEG_PORT=9000 docker compose up
+#   DMDEG_EXAMPLE_PORT=9001 docker compose --profile example up
+#
 # CSV を編集したら `docker compose restart` で取り込み直される。
 
 services:
@@ -33,7 +41,8 @@ services:
     build: .
     image: dmdeg:latest
     ports:
-      - "127.0.0.1:${DMDEG_PORT:-8002}:8000"
+      # app とは別のポート。両方を同時に起動できるようにするため。
+      - "127.0.0.1:${DMDEG_EXAMPLE_PORT:-8003}:8000"
     volumes:
       - dmdeg-build-example:/app/build_example
     environment:

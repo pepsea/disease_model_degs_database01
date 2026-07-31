@@ -31,15 +31,45 @@ docker compose --profile example up --build
 docker compose up --build
 ```
 
-ブラウザで **http://127.0.0.1:8002** を開きます。初回のビルドは 3〜5 分かかります。
+ブラウザで開きます（初回のビルドは 3〜5 分かかります）。
+
+- 自分のデータ: **http://127.0.0.1:8002**
+- 合成データ: **http://127.0.0.1:8003**
+
+2 つは別ポートなので同時に起動できます。
 
 | 操作 | コマンド |
 |---|---|
-| 停止 | `docker compose down` |
+| 停止 | `docker compose --profile example down` |
 | CSV を編集して反映 | `docker compose restart`（起動のたびに取り込み直します） |
 | ログを見る | `docker compose logs -f` |
 | ポートを変える | `DMDEG_PORT=9000 docker compose up` |
 | BASIC 認証をかける | `DMDEG_BASIC_AUTH=user:pass docker compose up` |
+
+停止するときに `--profile example` を付けているのは、プロファイル付きサービスが
+素の `docker compose down` では消し残ることがあるためです。
+
+#### `port is already allocated` と出る場合
+
+そのポートを既に何かが使っています。まず前回のコンテナが残っていないか確認します。
+
+```bash
+docker compose --profile example down --remove-orphans
+docker ps                       # まだ動いているコンテナがあれば表示される
+```
+
+それでも直らない場合は、Docker 以外のプロセスが掴んでいます。
+
+```bash
+# macOS / Linux — 8002 を使っているプロセスを調べる
+lsof -nP -iTCP:8002 -sTCP:LISTEN
+```
+
+そのプロセスを止めるか、別のポートで起動します。
+
+```bash
+DMDEG_PORT=9000 docker compose up
+```
 
 **CSV に問題があるとサーバは起動しません。** 取り込みに失敗した時点でコンテナが終了し、
 ファイル名・行番号付きのエラーがログに出ます。検証に失敗したまま古いデータを配信して
